@@ -9,6 +9,6 @@ import (
 
 func main() {
 	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/", index)
+	router.HandleFunc("/v1/", index)
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
