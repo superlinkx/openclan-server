@@ -1,38 +1,14 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
-type helloWorld struct {
-	Hello string `json:"hello"`
-	World int    `json:"world"`
-}
-
-type helloWorlds []helloWorld
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	hellos := helloWorlds{
-		helloWorld{
-			Hello: "Hello World",
-			World: 1,
-		},
-		helloWorld{
-			Hello: "Goodbye Cruel World",
-			World: 69,
-		},
-	}
-
-	if err := json.NewEncoder(w).Encode(hellos); err != nil {
-		fmt.Println(err)
-	}
-
-	return
-}
-
 func main() {
-	http.HandleFunc("/", handler)
-	http.ListenAndServe(":8080", nil)
+	router := mux.NewRouter().StrictSlash(true)
+	router.HandleFunc("/", index)
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
