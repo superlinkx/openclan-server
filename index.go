@@ -13,7 +13,7 @@ type helloWorld struct {
 
 type helloWorlds []helloWorld
 
-func index(w http.ResponseWriter, r *http.Request) {
+func indexHandler(w http.ResponseWriter, r *http.Request) {
 	hellos := helloWorlds{
 		helloWorld{
 			Hello: "Hello World",
