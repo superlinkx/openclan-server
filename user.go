@@ -1,9 +1,9 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type user struct {
@@ -19,38 +19,53 @@ type user struct {
 }
 type userResults []user
 
-func userHandler(w http.ResponseWriter, r *http.Request) {
-	u := user{
-		ID:       0,
-		Username: "user",
-		Gamertag: "gamer123",
-		Bio:      "big paragraph follows\nlol\n",
-		Mentor:   false,
-		Joined:   "2016-01-17 20:43:01 UTC",
-		Timezone: "EST",
-		Verified: true,
+func getUser(c *gin.Context) {
+	name := c.Param("user")
+	if name == "user" {
+		u := user{
+			ID:       0,
+			Username: "user",
+			Gamertag: "gamer123",
+			Bio:      "big paragraph follows\nlol\n",
+			Mentor:   false,
+			Joined:   "2016-01-17 20:43:01 UTC",
+			Timezone: "EST",
+			Verified: true,
+		}
+
+		results := userResults{}
+		results = append(results, u)
+
+		response := ocResponse{
+			Body: results,
+			Error: resError{
+				Type:        0,
+				Description: "This error was caused by cats",
+				Level:       0,
+			},
+			Meta: meta{
+				Records: 1,
+				Type:    "user",
+				Time:    "2016-01-17 22:57:03 UTC",
+			},
+		}
+
+		c.JSON(http.StatusOK, response)
+		return
 	}
 
-	results := userResults{}
-	results = append(results, u)
-
 	response := ocResponse{
-		Body: results,
 		Error: resError{
 			Type:        0,
-			Description: "This error was caused by cats",
+			Description: "User not found",
 			Level:       0,
 		},
 		Meta: meta{
-			Records: 1,
+			Records: 0,
 			Type:    "user",
 			Time:    "2016-01-17 22:57:03 UTC",
 		},
 	}
 
-	if err := json.NewEncoder(w).Encode(response); err != nil {
-		fmt.Println(err)
-	}
-
-	return
+	c.JSON(http.StatusNotFound, response)
 }
